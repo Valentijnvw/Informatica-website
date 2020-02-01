@@ -1,0 +1,163 @@
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+
+		<link href="css/fontawesome/css/all.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="icon" href="images/icon.png">
+		<title>Jouw resultaten</title>
+
+		<!-- load jQuery -->
+		<script src="js/jquery.min.js"></script>
+
+		<!-- Load Google charts -->
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+		<script type="text/javascript">
+			google.charts.load('current', {'packages':['table', 'corechart']});
+			google.charts.setOnLoadCallback(updateData);
+
+			function updateData() {
+				var dataNoord = $("#data-noord").val().split(";")
+				var dataZuid = $("#data-zuid").val().split(";")
+
+				// get the lowest value
+				var lowestVal = dataNoord.sort()[0]
+				if(dataZuid.sort()[0] < lowestVal) {
+					lowestVal = dataZuid.sort()[0]
+				}
+				
+				var histo = {};
+				
+				dataNoord.forEach(function(n) {
+					n = parseInt(n)
+					var str = `${n - 1}-${n}`
+					if(n % 2 == 0) {
+						str = `${n}-${n + 1}`
+					}
+					if(histo[str]) {
+						if(histo[str][0]) {
+							histo[str][0] += 1
+						} else {
+							histo[str][0] = 1
+						}
+					} else {
+						histo[str] = [1, 0]
+					}
+				})
+
+				dataZuid.forEach(function(n) {
+					n = parseInt(n)
+					var str = `${n - 1}-${n}`
+					if(n % 2 == 0) {
+						str = `${n}-${n + 1}`
+					}
+					if(histo[str]) {
+						if(histo[str][1]) {
+							histo[str][1] += 1
+						} else {
+							histo[str][1] = 1
+						}
+					} else {
+						histo[str] = [0, 1]
+					}
+				})
+
+				// sort the table values
+				var ordered = {};
+				Object.keys(histo).sort().forEach(function(key) {
+					ordered[key] = histo[key];
+				});
+				histo = ordered;
+
+				// add data to a google dataset
+				data = new google.visualization.DataTable();
+				data.addColumn('string', 'Lengteklasse (mm)');
+				data.addColumn('number', 'Noord');
+				data.addColumn('number', 'Zuid');
+				Object.keys(histo).forEach(function(key) {
+					var noord = histo[key][0]
+					var zuid = histo[key][1]
+					data.addRow([key, noord, zuid]);
+				});
+				
+
+				table = new google.visualization.Table(document.getElementById('table1'));
+        table.draw(data, {});
+
+				var chart = new google.visualization.ColumnChart(document.getElementById("chart1"));
+        chart.draw(data, {
+					hAxis: {
+						title: 'Lengte taxusnaalden (mm)'
+					},
+					vAxis: {
+						title: 'Aantal getelde naalden'
+					}
+				});
+				
+			}
+		</script>
+
+	</head>
+
+	<body>
+
+		<div id="header">
+			<!-- nav -->
+			<div id="nav">
+				<ul>
+					<img src="images/icon.png" id="logo"/>
+					<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li class="active">
+					<li><a href="inleiding.html">Inleiding</a></li class="active">
+					<li><a href="werkplan.html">Werkplan</a></li class="active">
+					<li><a href="resultaten.html">Resultaten</a></li>
+					<li><a href="conclusie.html">Conclusie</a></li>
+					<li class="active"><a href="jouw-resultaten.html">Jouw resultaten</a></li class="active">
+				</ul>
+			</div>
+			<!-- title / header -->
+			<div id="title">
+				<h1>JOUW resultaten</h1>
+			</div>
+		</div>
+
+		<!-- content -->
+
+		<div class="wrapper">
+			<div id="content">
+				
+				<p>Op deze pagina kun je je eigen resultaten invoeren en berekenen wij jouw conclusie automatisch. Voor alle onderzoeken geldt natuurlijk: hoe meer gegevens, hoe beter. Je hoeft geen specifiek aantal naalden te meten maar hoe meer je er meet, hoe accurater jouw resultaten zullen zijn.</p>
+				<p><strong>Let op: het maakt niet uit hoeveel naalden je meet, maar zorg er wel voor dat je evenveel naalden van de noordkant als van de zuidkant meet. Anders zal de grafiek niet meer kloppen!</strong></p>
+
+					<p>Voer hieronder de lengte van al jouw gemeten taxusnaalden van de <strong>noordkant</strong> van de boom in, gescheiden door een puntkomma (;). Er staan 3 voorbeeldgegevens in, om te laten zien hoe deze tool werkt.</p>
+					<textarea id="data-noord" rows="4" cols="50">25;32;29</textarea>
+
+					<p>Voer hieronder de lengte van al jouw gemeten taxusnaalden van de <strong>zuidkant</strong> van de boom in, gescheiden door een puntkomma (;). Ook hier staan 3 voorbeeldgegevens in, om te laten zien hoe deze tool werkt.</p>
+					<textarea id="data-zuid" rows="4" cols="50">18;15;21</textarea>
+
+					<p>Op welk halfrond is jouw taxusboom gekweekt?</p>
+					<input type="radio" name="halfrond" value="noord" checked> Noorderlijk halfrond<br>
+					<input type="radio" name="halfrond" value="zuid"> Zuidelijk halfrond halfrond<br>
+					<input type="radio" name="halfrond" value="evenaar"> Rond de evenaar
+					<p><i>Dit is belangrijk om te weten, aangezien de hoeveelheid licht die de kanten krijgen afhangt van de positie van de boom op aarde.</i></p>
+
+					<p>Heb je alles ingevuld? Klik dan op deze knop om de resultaten bij te werken:</p>
+					<button onclick="updateData()">Resultaten bijwerken</button>
+
+				<hr>
+				<h2>Jouw resultaten:</h2>
+
+				<p><i>Tabel 1: aantal taxusnaalden per lengteklassen van 2mm</i></p>
+				<div id="table1"></div>
+
+				<p><i>Figuur 1: staafdiagram aantal taxusnaalden per lengteklassen 2mm</i></p>
+				<div id="chart1"></div>
+
+			</div>
+		</div>
+
+		<div id="footer"></div>
+
+	</body>
+</html>

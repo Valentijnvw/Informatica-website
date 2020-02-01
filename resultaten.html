@@ -1,0 +1,118 @@
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+
+		<link href="css/fontawesome/css/all.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="icon" href="images/icon.png">
+		<title>Resultaten</title>
+
+		<!-- Load Google charts -->
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+		<script type="text/javascript">
+			google.charts.load('current', {'packages':['table', 'corechart']});
+			google.charts.setOnLoadCallback(drawStats);
+
+			function drawStats() {
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Groep naam');
+				data.addColumn('number', 'Noord');
+				data.addColumn('number', 'Zuid');
+				data.addRows([
+					['Ser', 29.1, 18.3],
+					['Bril', 28, 14.4],
+					['VG', 28.5, 18.1],
+					['TI', 24.3, 13.7],
+					['FC', 28.8, 18.2],
+					['AA', 28.9, 19.3],
+					['GGEZ', 28.7, 14.7],
+					['S/M', 25.2, 16.7]
+				]);
+				var table = new google.visualization.Table(document.getElementById('table1'));
+        table.draw(data, {});
+
+				data = new google.visualization.DataTable();
+				data.addColumn('string', 'Lengteklasse (mm)');
+				data.addColumn('number', 'Noord');
+				data.addColumn('number', 'Zuid');
+				data.addRows([
+					['12-13', 0, 1],
+					['14-15', 0, 11],
+					['16-17', 0, 9],
+					['18-19', 0, 10],
+					['20-21', 0, 15],
+					['22-23', 0, 4],
+					['24-25', 5, 0],
+					['26-27', 9, 0],
+					['28-29', 15, 0],
+					['30-31', 17, 0],
+					['32-33', 3, 0],
+					['34-35', 1, 0]
+				]);
+
+				table = new google.visualization.Table(document.getElementById('table2'));
+        table.draw(data, {});
+
+				var chart = new google.visualization.ColumnChart(document.getElementById("chart1"));
+        chart.draw(data, {
+					hAxis: {
+						title: 'Lengte taxusnaalden (mm)'
+					},
+					vAxis: {
+						title: 'Aantal getelde naalden'
+					}
+				});
+				
+			}
+		</script>
+
+	</head>
+
+	<body>
+
+		<div id="header">
+			<!-- nav -->
+			<div id="nav">
+				<ul>
+					<img src="images/icon.png" id="logo"/>
+					<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li class="active">
+					<li><a href="inleiding.html">Inleiding</a></li class="active">
+					<li><a href="werkplan.html">Werkplan</a></li class="active">
+					<li class="active"><a href="resultaten.html">Resultaten</a></li>
+					<li><a href="conclusie.html">Conclusie</a></li>
+					<li><a href="jouw-resultaten.html">Jouw resultaten</a></li>
+				</ul>
+			</div>
+			<!-- title / header -->
+			<div id="title">
+				<h1>Resultaten</h1>
+			</div>
+		</div>
+
+		<!-- content -->
+
+		<div class="wrapper">
+			<div id="content">
+				
+				<p>Als eerst hebben wij, en onze medeleerlingen, de gemiddelde lengte van onze taxusnaalden afkomstig van de noord- en zuidkant (apart) van de taxusboom genoteerd in een tabel. Zie tabel 1 voor deze resultaten.</p>
+				<p><i>Tabel 1: gemiddelde lengte van 50 naalden van een taxusboom (in mm)</i></p>
+				<div id="table1"></div>
+
+				<p>Vervolgens heb ik de resultaten van mij en mijn partner per lengteklassen van 2mm in een tabel gezet. Zie tabel 2 voor deze resultaten.</p>
+				<p><i>Tabel 2: aantal taxusnaalden per lengteklassen van 2mm</i></p>
+				<div id="table2"></div>
+
+				<p><i>Figuur 1: staafdiagram aantal taxusnaalden per lengteklassen 2mm</i></p>
+				<div id="chart1"></div>
+
+				<p>Aan deze gegevens kan je zien dat de taxusnaalden afkomstig van de noordkant van de boom aanzienlijk langer zijn dan de naalden van de zuidkant van de boom. </p>
+
+			</div>
+		</div>
+
+		<div id="footer"></div>
+
+	</body>
+</html>
