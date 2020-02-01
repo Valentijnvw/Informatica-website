@@ -93,6 +93,6 @@ body {
   padding-left: 10px;
 }
 
-p, h1, h2, a, #content li {
+p, h1, h2, h3, a, #content li {
 	font-family: "Trebuchet MS", Helvetica, sans-serif
 }

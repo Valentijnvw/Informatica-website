@@ -19,14 +19,41 @@
 			google.charts.setOnLoadCallback(updateData);
 
 			function updateData() {
+				// load data and filter for extra ;
 				var dataNoord = $("#data-noord").val().split(";")
 				var dataZuid = $("#data-zuid").val().split(";")
-
-				// get the lowest value
-				var lowestVal = dataNoord.sort()[0]
-				if(dataZuid.sort()[0] < lowestVal) {
-					lowestVal = dataZuid.sort()[0]
+				dataNoord = dataNoord.filter(function(n) {return n != ""})
+				dataZuid = dataZuid.filter(function(n) {return n != ""})
+			
+				// check for data errors
+				var error = false;
+				function checkValid(str) {
+					var int = parseInt(str)
+					if(isNaN(int) || str.includes(',')) {
+						return `Het lijkt erop dat je een van je cijfers niet goed hebt ingevoerd! Het gaat om het volgende stukje tekst: "${str}"`
+					} else if(int > 99) {
+						return `Het lijkt erop dat er een getal boven de 99 in je lijst staat. Dit kan deze tool helaas niet verwerken.`
+					} else {
+						return false
+					}
 				}
+				dataNoord.forEach(function(n) { 
+					if(checkValid(n) && !error) {
+						alert(checkValid(n))
+						error = true;
+					}
+				})
+				dataZuid.forEach(function(n) { 
+					if(checkValid(n) && !error) {
+						alert(checkValid(n))
+						error = true;
+					}
+				})
+				if(error) {
+					return;
+				}
+
+				// convert to histogram with 2mm 
 				
 				var histo = {};
 				
@@ -64,6 +91,27 @@
 					}
 				})
 
+				// get the highest / lowest value
+				var lowestVal = dataNoord.sort()[0]
+				if(dataZuid.sort()[0] < lowestVal) {
+					lowestVal = dataZuid.sort()[0]
+				}
+				var highgestVal = dataNoord.sort(function(a,b){return b-a})[0]
+				if(dataZuid.sort()[0] < lowestVal) {
+					highgestVal = dataZuid.sort(function(a,b){return b-a})[0]
+				}
+
+				// fill in empty values
+				// Object.keys(histo).forEach(function(key, i) {
+				// 	var low = parseInt(key.substring(0, 2))
+				// 	var high = parseInt(key.substring(3, 5))
+				// 	if(!histo[`${low + 2}-${high + 2}`]) {
+				// 		if(low != lowestVal && high != lowestVal && low != highgestVal && high != highgestVal) {
+				// 			histo[`${low + 2}-${high + 2}`] = [0, 0]
+				// 		}
+				// 	}
+				// });
+
 				// sort the table values
 				var ordered = {};
 				Object.keys(histo).sort().forEach(function(key) {
@@ -95,7 +143,41 @@
 						title: 'Aantal getelde naalden'
 					}
 				});
+
+				// gemiddelde lengtes
+				var sumNoord = 0;
+				var sumZuid = 0;
+				dataNoord.forEach(function(n) {
+					sumNoord += parseInt(n);
+				})
+				dataZuid.forEach(function(n) {
+					sumZuid += parseInt(n);
+				})
+				var avgNoord = sumNoord/dataNoord.length;
+				var avgZuid = sumZuid/dataZuid.length;
+				$("#gemiddeld-noord").html(`${avgNoord}mm`)
+				$("#gemiddeld-zuid").html(`${avgZuid}mm`)
 				
+				
+				// 0 = noordelijk halfrond, 1 = zuidelijk halfrond, 2 = evenaar
+				var halfrond = $('input[name="halfrond"]:checked')[0].value
+				if(halfrond == "noord") {
+					if(avgZuid < avgNoord - 3) {
+						$("#conclusie").html("De hoeveelheid licht heeft een <strong>negatief</strong> effect op de lengte van de naalden van de taxusboom.")
+					} else {
+						$("#conclusie").html("De hoeveelheid licht heeft een <strong>positief</strong> effect op de lengte van de naalden van de taxusboom.")
+					}
+				} else if (halfrond == "zuid") {
+					if(avgZuid < avgNoord - 3) {
+						$("#conclusie").html("De hoeveelheid licht heeft een <strong>positief</strong> effect op de lengte van de naalden van de taxusboom.")
+					} else {
+						$("#conclusie").html("De hoeveelheid licht heeft een <strong>negatief</strong> effect op de lengte van de naalden van de taxusboom.")
+					}
+				} else if(halfrond == "evenaar") {
+					$("#conclusie").html("Omdat de taxusboom op de evenaar is gegroeid en dus de noord- en zuidkant ongeveer evenveel licht hebben gekregen, kan je hiermee de onderzoeksvraag niet beantwoorden.")
+				} else {
+					$("#conclusie").html("Error!")
+				}
 			}
 		</script>
 
@@ -125,21 +207,24 @@
 		<!-- content -->
 
 		<div class="wrapper">
-			<div id="content">
+			<span id="content">
 				
 				<p>Op deze pagina kun je je eigen resultaten invoeren en berekenen wij jouw conclusie automatisch. Voor alle onderzoeken geldt natuurlijk: hoe meer gegevens, hoe beter. Je hoeft geen specifiek aantal naalden te meten maar hoe meer je er meet, hoe accurater jouw resultaten zullen zijn.</p>
 				<p><strong>Let op: het maakt niet uit hoeveel naalden je meet, maar zorg er wel voor dat je evenveel naalden van de noordkant als van de zuidkant meet. Anders zal de grafiek niet meer kloppen!</strong></p>
 
-					<p>Voer hieronder de lengte van al jouw gemeten taxusnaalden van de <strong>noordkant</strong> van de boom in, gescheiden door een puntkomma (;). Er staan 3 voorbeeldgegevens in, om te laten zien hoe deze tool werkt.</p>
-					<textarea id="data-noord" rows="4" cols="50">25;32;29</textarea>
+					<p>Voer hieronder de lengte van al jouw gemeten taxusnaalden van de <strong>noordkant</strong> van de boom in, gescheiden door een puntkomma (;). Er staan wat voorbeeldgegevens in, om te laten zien hoe deze tool werkt. Gebruik geen kommagetallen!</p>
+					<textarea id="data-noord" rows="4" cols="50">27;35;32;28;27;23;35;33;30;32;27;34;35;23;37;33;34;30;32;32;32;30;35;32;28;29;28;30;28;29;33;30;31;31;24;25;25;25;24;27</textarea>
 
-					<p>Voer hieronder de lengte van al jouw gemeten taxusnaalden van de <strong>zuidkant</strong> van de boom in, gescheiden door een puntkomma (;). Ook hier staan 3 voorbeeldgegevens in, om te laten zien hoe deze tool werkt.</p>
-					<textarea id="data-zuid" rows="4" cols="50">18;15;21</textarea>
+					<p>Voer hieronder de lengte van al jouw gemeten taxusnaalden van de <strong>zuidkant</strong> van de boom in, gescheiden door een puntkomma (;). Ook hier staan wat voorbeeldgegevens in, om te laten zien hoe deze tool werkt. Gebruik geen kommagetallen!</p>
+					<textarea id="data-zuid" rows="4" cols="50">18;15;21;24;25;30;17;18;20;20;20;21;19;18;23;25;21;20;19;15;27;20;20;19;24;22;22;23;16;17;25;20;23;19;25;24;23;23;19;26</textarea>
 
 					<p>Op welk halfrond is jouw taxusboom gekweekt?</p>
-					<input type="radio" name="halfrond" value="noord" checked> Noorderlijk halfrond<br>
-					<input type="radio" name="halfrond" value="zuid"> Zuidelijk halfrond halfrond<br>
-					<input type="radio" name="halfrond" value="evenaar"> Rond de evenaar
+					<form id="halfrond">
+						<input type="radio" name="halfrond" value="noord" checked> Noorderlijk halfrond<br>
+						<input type="radio" name="halfrond" value="zuid"> Zuidelijk halfrond halfrond<br>
+						<input type="radio" name="halfrond" value="evenaar"> Rond de evenaar
+					</form>
+					
 					<p><i>Dit is belangrijk om te weten, aangezien de hoeveelheid licht die de kanten krijgen afhangt van de positie van de boom op aarde.</i></p>
 
 					<p>Heb je alles ingevuld? Klik dan op deze knop om de resultaten bij te werken:</p>
@@ -153,6 +238,14 @@
 
 				<p><i>Figuur 1: staafdiagram aantal taxusnaalden per lengteklassen 2mm</i></p>
 				<div id="chart1"></div>
+
+				<h3>Gemiddelde lengtes:</h3>
+				<p>
+					Noordkant: <span id="gemiddeld-noord">laden...</span><br>
+					Zuidkant: <span id="gemiddeld-zuid">laden...</span>
+				</p>
+				<h3>Conclusie:</h3>
+				<p id="conclusie">laden...</p>
 
 			</div>
 		</div>
