@@ -10,9 +10,9 @@ body {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-	width: 100%;
-	background-image: linear-gradient(to bottom right, #86af49, #b5e7a0);
-	padding: 5px 0;
+  width: 100%;
+  background-image: linear-gradient(to bottom right, #86af49, #b5e7a0);
+  padding: 5px 0;
 }
 
 #nav ul {
