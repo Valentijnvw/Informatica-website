@@ -155,6 +155,8 @@
 				})
 				var avgNoord = sumNoord/dataNoord.length;
 				var avgZuid = sumZuid/dataZuid.length;
+				avgNoord = Math.round(avgNoord * 100) / 100
+				avgZuid = Math.round(avgZuid * 100) / 100
 				$("#gemiddeld-noord").html(`${avgNoord}mm`)
 				$("#gemiddeld-zuid").html(`${avgZuid}mm`)
 				
@@ -209,7 +211,7 @@
 		<div class="wrapper">
 			<span id="content">
 				
-				<p>Op deze pagina kun je je eigen resultaten invoeren en berekenen wij jouw conclusie automatisch. Voor alle onderzoeken geldt natuurlijk: hoe meer gegevens, hoe beter. Je hoeft geen specifiek aantal naalden te meten maar hoe meer je er meet, hoe accurater jouw resultaten zullen zijn.</p>
+				<p>Op deze pagina kun je je eigen resultaten invoeren en berekenen wij jouw conclusie automatisch. Ook krijg je er een aantal tabellen en grafieken bij om je data te visualiseren. Voor alle onderzoeken geldt natuurlijk: hoe meer gegevens, hoe beter. Je hoeft geen specifiek aantal naalden te meten maar hoe meer je er meet, hoe accurater jouw resultaten zullen zijn.</p>
 				<p><strong>Let op: het maakt niet uit hoeveel naalden je meet, maar zorg er wel voor dat je evenveel naalden van de noordkant als van de zuidkant meet. Anders zal de grafiek niet meer kloppen!</strong></p>
 
 					<p>Voer hieronder de lengte van al jouw gemeten taxusnaalden van de <strong>noordkant</strong> van de boom in, gescheiden door een puntkomma (;). Er staan wat voorbeeldgegevens in, om te laten zien hoe deze tool werkt. Gebruik geen kommagetallen!</p>

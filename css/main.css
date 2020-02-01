@@ -97,6 +97,10 @@ p, h1, h2, h3, a, #content li {
 	font-family: "Trebuchet MS", Helvetica, sans-serif
 }
 
+#page-list a {
+	color: black;
+}
+
 /* footer */
 
 #footer {
