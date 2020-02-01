@@ -96,3 +96,15 @@ body {
 p, h1, h2, h3, a, #content li {
 	font-family: "Trebuchet MS", Helvetica, sans-serif
 }
+
+/* footer */
+
+#footer {
+	width: 100%;
+	background-color: #b2d047;
+	height: 70px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 150px;
+}
